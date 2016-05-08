@@ -13,66 +13,70 @@
     tools:context="com.havelans.marinete.LoginActivity"
     tools:showIn="@layout/activity_login">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/logo" />
-
-    <EditText
-        android:id="@+id/edit_text_nome"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:height="30dp"
-        android:background="@android:color/white"
-        android:hint="Nome"
-        android:padding="2dp" />
-
-    <EditText
-        android:id="@+id/edit_text_senha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/edit_text_nome"
-        android:layout_margin="5dp"
-        android:height="30dp"
-        android:background="@android:color/white"
-        android:hint="Senha"
-        android:padding="2dp"
-        android:password="true" />
-
-    <Button
-        android:id="@+id/button_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:background="?attr/colorAccent"
-        android:text="Entrar"
-        android:textColor="@android:color/white" />
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
 
-        <TextView
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:src="@drawable/logo" />
+
+        <EditText
+            android:id="@+id/edit_text_nome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/white"
+            android:hint="Nome"
+            android:inputType="text"
+            android:padding="2dp" />
+
+        <EditText
+            android:id="@+id/edit_text_senha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edit_text_nome"
+            android:background="@android:color/white"
+            android:hint="Senha"
+            android:padding="2dp"
+            android:password="true" />
+
+        <Button
+            android:id="@+id/button_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Não é cadastrado? "
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="?attr/colorAccent"
+            android:text="Entrar"
+            android:textColor="@android:color/white" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Clique aqui"
-            android:textColor="?attr/colorAccent"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:id="@+id/text_view_cadastrar"/>
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Não é cadastrado? "
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/text_view_cadastrar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clique aqui"
+                android:textColor="?attr/colorAccent"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
