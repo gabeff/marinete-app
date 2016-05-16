@@ -9,32 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.havelans.marinete.dominio.Marinete;
+import com.havelans.marinete.rest.MarineteRestClient;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.HttpUrl;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
 public class MarineteActivity extends AppCompatActivity {
-
-    private static final String URL = "http://192.168.43.52:8080/Marinete/webservice/marinete";
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-    OkHttpClient client = new OkHttpClient();
-    private Gson gson;
 
     ListView listViewMarinete;
     ArrayList<Marinete> listaMarinete = new ArrayList<>();
+    MarineteRestClient marineteRestClient;
 
     private MarineteAdapter adapter;
 
@@ -46,8 +31,6 @@ public class MarineteActivity extends AppCompatActivity {
         setupActionBar();
 
         listViewMarinete = (ListView) findViewById(R.id.lista_marinete);
-
-        gson = new GsonBuilder().create();
 
         if (savedInstanceState == null) {
             new CarregaMarinetesAsynkTask().execute();
@@ -83,15 +66,10 @@ public class MarineteActivity extends AppCompatActivity {
 
         @Override
         protected List<Marinete> doInBackground(Void... params) {
-            try {
-                if (listaMarinete == null || listaMarinete.isEmpty()) {
-                    String json = listarMarinetes(URL);
-                    Type type = new TypeToken<List<Marinete>>() {
-                    }.getType();
-                    listaMarinete = gson.fromJson(json, type);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (listaMarinete == null || listaMarinete.isEmpty()) {
+                marineteRestClient = new MarineteRestClient();
+                listaMarinete = marineteRestClient.ListarMarinetes();
+                return listaMarinete;
             }
             return listaMarinete;
         }
@@ -103,17 +81,6 @@ public class MarineteActivity extends AppCompatActivity {
             adapter = new MarineteAdapter(MarineteActivity.this, marinetes);
             listViewMarinete.setAdapter(adapter);
         }
-    }
-
-    private String listarMarinetes(String url) throws IOException {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-        urlBuilder.addPathSegments("listar");
-        url = urlBuilder.build().toString();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-        Response response = client.newCall(request).execute();
-        return response.body().string();
     }
 
 
