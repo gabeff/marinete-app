@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:background="@android:color/white"
-            android:hint="Nome"
+            android:hint="Login"
             android:inputType="text"
             android:padding="2dp" />
 
