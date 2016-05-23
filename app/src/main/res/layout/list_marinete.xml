@@ -4,33 +4,36 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:id="@+id/foto_marinete"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@mipmap/ic_launcher"
-        android:id="@+id/foto_marinete"/>
+        android:padding="5dp"
+        android:src="@mipmap/ic_launcher"/>
 
     <LinearLayout
+        android:layout_toRightOf="@+id/foto_marinete"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:orientation="vertical"
         android:gravity="center_vertical"
-        android:layout_toRightOf="@+id/foto_marinete"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
         android:paddingRight="?android:attr/listPreferredItemPaddingRight">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
         android:id="@+id/nome_marinete"
         android:textColor="@color/colorPrimaryDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
         android:id="@+id/idade_marinete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"/>
 
     <RatingBar

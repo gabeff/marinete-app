@@ -5,10 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.havelans.marinete.dominio.Marinete;
+import com.havelans.marinete.rest.CircleTransform;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -46,6 +49,13 @@ public class MarineteAdapter extends BaseAdapter {
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(R.layout.list_marinete, null);
         }
+
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.foto_marinete);
+        Picasso.with(context)
+                .load("http://www.marineteapp.com.br/imagens/marinetes/marinete-"+getItemId(position)+".png")
+                .error(R.mipmap.ic_launcher)
+                .transform(new CircleTransform())
+                .into(imageView);
 
         TextView text = (TextView) convertView.findViewById(R.id.nome_marinete);
         text.setText(getItem(position).getNome());

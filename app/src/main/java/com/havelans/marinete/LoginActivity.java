@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void listar() {
-        Intent intent = new Intent(this, MarineteActivity.class);
+        Intent intent = new Intent(this, RankingActivity.class);
         startActivity(intent);
     }
 
