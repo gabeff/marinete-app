@@ -10,19 +10,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="Maceió - AL"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
     </android.support.v7.widget.Toolbar>
 
-    <ListView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/lista_marinete"></ListView>
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/lista_marinete"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"></ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

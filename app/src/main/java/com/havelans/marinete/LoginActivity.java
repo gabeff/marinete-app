@@ -3,7 +3,6 @@ package com.havelans.marinete;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +13,10 @@ import android.widget.Toast;
 import com.havelans.marinete.dominio.Usuario;
 import com.havelans.marinete.rest.UsuarioRestClient;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class LoginActivity extends Utils implements View.OnClickListener {
 
     private EditText editTextNome;
     private EditText editTextSenha;
@@ -48,6 +50,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         textViewCadastrar = (TextView) findViewById(R.id.text_view_cadastrar);
         textViewCadastrar.setOnClickListener(this);
 
+        sharedPreferences = getSharedPreferences();
+        editor = sharedPreferences.edit();
     }
 
     @Override
@@ -55,6 +59,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         init();
+        if (sharedPreferences.getString("token", null) != null) {
+            listar();
+        }
     }
 
     @Override
@@ -78,30 +85,47 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         startActivity(intent);
     }
 
-    private void imprimirMensagem(String mensagem) {
-        Toast.makeText(getApplicationContext(), mensagem, Toast.LENGTH_LONG).show();
-    }
-
-    private class AsyncUsuario extends AsyncTask<String, Void, Void> {
+    private class AsyncUsuario extends AsyncTask<String, Void, String> {
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected String doInBackground(String... params) {
             usuarioRestClient = new UsuarioRestClient();
-            String retorno = usuarioRestClient.SignUsuario(params[0], usuario);
+            JSONObject jsonObject = usuarioRestClient.SignUsuario(params[0], usuario);
+
+            String retorno = null;
+            String msg = null;
+            try {
+                retorno = jsonObject.getString("resp");
+                msg = jsonObject.getString("msg");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             if (params[0].equals("logar")) {
                 if (retorno != null && retorno.equals("1")) {
+                    editor.putString("token", msg);
+                    editor.commit();
                     listar();
+                    return "Bem-vindo, " + usuario.getNome() + "!";
+                } else if (msg.equals("UNAUTHORIZED")) {
+                    return "Login e/ou senha inválidos";
                 } else {
-                    imprimirMensagem("Erro: " + retorno);
+                    return msg;
                 }
             } else if (params[0].equals("cadastrar")) {
                 if (retorno != null && retorno.equals("1")) {
-                    imprimirMensagem("Cadastro realizado com sucesso!");
+                    return "Cadastro realizado com sucesso!";
                 } else {
-                    imprimirMensagem("Erro: " + retorno);
+                    return msg;
                 }
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
         }
     }
 }

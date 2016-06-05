@@ -1,6 +1,11 @@
 package com.havelans.marinete.rest;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -14,28 +19,80 @@ import okhttp3.Response;
  * Created by gabriel.fernandes on 06/05/2016.
  */
 public class RestClient {
-    public static final String BASE_URL = "https://marinete.herokuapp.com/webservice";
+    //public static final String BASE_URL = "https://marinete.herokuapp.com/webservice";
+    public static final String BASE_URL = "http://192.168.1.6:8080/Marinete/rest/";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     OkHttpClient client = new OkHttpClient();
     public Gson gson;
     public String opcao;
+    private String resp;
+    private String msg;
+    private JSONObject jsonObject;
+    private Response response;
 
-    protected String doGet(String url) throws IOException {
+    protected JSONObject doGet(String url, String token) {
         Request request = new Request.Builder()
                 .url(url)
+                .addHeader("Authorization","Bearer "+token)
                 .build();
-        Response response = client.newCall(request).execute();
-        return response.body().string();
+
+        execRequest(request);
+
+        buildJson();
+
+        return jsonObject;
     }
 
-    protected String doPost(String url, String json) throws IOException {
+    protected JSONObject doPost(String url, String json) {
+        response = null;
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .build();
-        Response response = client.newCall(request).execute();
-        return response.body().string();
+
+        execRequest(request);
+
+        buildJson();
+
+        return jsonObject;
+    }
+
+    private void execRequest(Request request) {
+        try {
+            response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                resp = response.header("response");
+                msg = response.body().string();
+            } else if (response.code() == 401) {
+                resp = "0";
+                msg = "UNAUTHORIZED";
+            } else {
+                resp = "0";
+                msg = "Algo está errado: "+response.message();
+            }
+        } catch (IOException e) {
+            resp = "0";
+            e.printStackTrace(); //lembrar de remover em produção
+            Log.e("ERRO", e.getClass().getCanonicalName()); //lembrar de remover em produção
+            if (e.getClass().getCanonicalName().equals("javax.net.ssl.SSLHandshakeException")) {
+                msg = "Problema de certificado SSL, favor verificar sua rede.";
+            } else if (e.getClass().getCanonicalName().equals("java.net.SocketTimeoutException")) {
+                msg = "Servidor offline, tente novamente em alguns segundos";
+            } else {
+                msg = "Algo está errado, favor tentar novamente";
+            }
+        }
+    }
+
+    private void buildJson() {
+        jsonObject = new JSONObject();
+        try {
+            jsonObject.put("resp",resp);
+            jsonObject.put("msg",msg);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

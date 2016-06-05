@@ -3,21 +3,30 @@ package com.havelans.marinete;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.havelans.marinete.dominio.Marinete;
 import com.havelans.marinete.rest.MarineteRestClient;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RankingActivity extends MarineteActionBar {
+public class RankingActivity extends Utils {
 
     ListView listViewMarinete;
     ArrayList<Marinete> listaMarinete = new ArrayList<>();
     MarineteRestClient marineteRestClient;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private MarineteAdapter adapter;
 
@@ -33,8 +42,24 @@ public class RankingActivity extends MarineteActionBar {
         listViewMarinete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Marinete marinete = adapter.getItem(position);
                 Intent intent = new Intent(view.getContext(), MarineteActivity.class);
+                intent.putExtra("marinete", marinete);
                 startActivity(intent);
+            }
+        });
+
+        sharedPreferences = getSharedPreferences();
+        editor = sharedPreferences.edit();
+
+        gson = new GsonBuilder().create();
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                listaMarinete = new ArrayList<>();
+                new CarregaMarinetesAsynkTask().execute();
             }
         });
 
@@ -56,25 +81,72 @@ public class RankingActivity extends MarineteActionBar {
         new CarregaMarinetesAsynkTask().execute();
     }
 
-    public class CarregaMarinetesAsynkTask extends AsyncTask<Void, Void, List<Marinete>> {
+    private void loginAgain() {
+        editor.remove("token");
+        editor.commit();
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    public class CarregaMarinetesAsynkTask extends AsyncTask<Void, Void, JSONObject> {
 
 
         @Override
-        protected List<Marinete> doInBackground(Void... params) {
+        protected JSONObject doInBackground(Void... params) {
+
             if (listaMarinete == null || listaMarinete.isEmpty()) {
                 marineteRestClient = new MarineteRestClient();
-                listaMarinete = marineteRestClient.ListarMarinetes();
-                return listaMarinete;
+                JSONObject jsonObject = marineteRestClient.ListarMarinetes(sharedPreferences.getString("token", null));
+
+                if (jsonObject != null) {
+                    return jsonObject;
+                }
+                return null;
             }
-            return listaMarinete;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(List<Marinete> marinetes) {
-            super.onPostExecute(marinetes);
+        protected void onPreExecute() {
+            super.onPreExecute();
+            swipeRefreshLayout.setRefreshing(true);
+        }
 
-            adapter = new MarineteAdapter(RankingActivity.this, marinetes);
-            listViewMarinete.setAdapter(adapter);
+        @Override
+        protected void onPostExecute(JSONObject response) {
+            super.onPostExecute(response);
+
+            String retorno = null;
+            String msg = null;
+
+            swipeRefreshLayout.setRefreshing(false);
+
+            if (response != null) {
+                try {
+                    retorno = response.getString("resp");
+                    msg = response.getString("msg");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (retorno.equals("1")) {
+                    Type type = new TypeToken<List<Marinete>>() {
+                    }.getType();
+                    listaMarinete = gson.fromJson(msg, type);
+                    if (listaMarinete != null) {
+                        adapter = new MarineteAdapter(RankingActivity.this, listaMarinete);
+                        listViewMarinete.setAdapter(adapter);
+                    }
+                } else if (msg.equals("UNAUTHORIZED")) {
+                    Toast.makeText(getApplicationContext(), "Autorização Inválida", Toast.LENGTH_LONG).show();
+                    loginAgain();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Erro ao carregar Marinetes: " + msg, Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "Erro ao carregar Marinetes, favor tentar novamente", Toast.LENGTH_LONG).show();
+            }
+
         }
     }
 

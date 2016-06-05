@@ -4,16 +4,16 @@
 
     <item android:state_pressed="true"
         android:state_window_focused="true"
-        android:drawable="@drawable/marinetee" />
+        android:drawable="@mipmap/marinetee" />
 
     <item android:state_focused="true"
         android:state_window_focused="true"
-        android:drawable="@drawable/marinetee" />
+        android:drawable="@mipmap/marinetee" />
 
     <item android:state_selected="true"
         android:state_window_focused="true"
-        android:drawable="@drawable/marinetee" />
+        android:drawable="@mipmap/marinetee" />
 
-    <item android:drawable="@drawable/marinetee" />
+    <item android:drawable="@mipmap/marinetee" />
 
 </selector>
