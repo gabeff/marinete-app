@@ -18,13 +18,17 @@ import org.json.JSONObject;
 
 public class LoginActivity extends Utils implements View.OnClickListener {
 
+    //Declarar todos elementos que devem ser manuseados da atividade aqui
     private EditText editTextNome;
     private EditText editTextSenha;
     private Button buttonLogin;
     private TextView textViewCadastrar;
+
+    //Demais declarações
     private Usuario usuario;
     private UsuarioRestClient usuarioRestClient;
 
+    //Inicialização de variáveis
     private void init() {
         editTextNome = (EditText) findViewById(R.id.edit_text_nome);
         editTextSenha = (EditText) findViewById(R.id.edit_text_senha);
@@ -59,12 +63,16 @@ public class LoginActivity extends Utils implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         init();
+        //No caso de existir um token salvo, tentar autenticar usuário automaticamente
         if (sharedPreferences.getString("token", null) != null) {
             listar();
         }
     }
 
     @Override
+    //implementar onclick da classe View.OnClickListener
+    //instanciar um usuario com o login e senha fornecidos
+    //e executar a ação desejada verificando qual botão acionado
     public void onClick(View v) {
         usuario = new Usuario();
         usuario.setNome(editTextNome.getText().toString());
@@ -74,23 +82,29 @@ public class LoginActivity extends Utils implements View.OnClickListener {
                 new AsyncUsuario().execute("logar");
                 break;
             case R.id.text_view_cadastrar:
-                new AsyncUsuario().execute("cadastrar");
+                Intent intent = new Intent(this, CadastrarActivity.class);
+                startActivity(intent);
                 break;
         }
 
     }
 
+    //chamar atividade de ranking das marinetes
     private void listar() {
         Intent intent = new Intent(this, RankingActivity.class);
         startActivity(intent);
     }
 
+    //chamadas assincronas para o webservice
+    //o webservice retornar um JSON, interpretar retorno e msg do webservice
+    //em caso de retorno = 1, método chamado obteve sucesso
+    //se 0, houve algum erro que deve ser especificado na msg
     private class AsyncUsuario extends AsyncTask<String, Void, String> {
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(String... opcao) {
             usuarioRestClient = new UsuarioRestClient();
-            JSONObject jsonObject = usuarioRestClient.SignUsuario(params[0], usuario);
+            JSONObject jsonObject = usuarioRestClient.SignUsuario(opcao[0], usuario);
 
             String retorno = null;
             String msg = null;
@@ -101,8 +115,10 @@ public class LoginActivity extends Utils implements View.OnClickListener {
                 e.printStackTrace();
             }
 
-            if (params[0].equals("logar")) {
+            if (opcao[0].equals("logar")) {
                 if (retorno != null && retorno.equals("1")) {
+                    //logado com sucesso, salvar token para utilizar em todas futuras
+                    //comunicações com o webservice
                     editor.putString("token", msg);
                     editor.commit();
                     listar();
@@ -112,7 +128,7 @@ public class LoginActivity extends Utils implements View.OnClickListener {
                 } else {
                     return msg;
                 }
-            } else if (params[0].equals("cadastrar")) {
+            } else if (opcao[0].equals("cadastrar")) {
                 if (retorno != null && retorno.equals("1")) {
                     return "Cadastro realizado com sucesso!";
                 } else {

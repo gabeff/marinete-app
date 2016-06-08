@@ -2,6 +2,7 @@ package com.havelans.marinete.dominio;
 
 /**
  * Created by gabriel.fernandes on 06/05/2016.
+ * Bean usuario, cliente do app
  */
 public class Usuario {
     private String nome;

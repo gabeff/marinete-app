@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.havelans.marinete.CadastrarActivity">
+
+    <EditText
+        android:padding="@dimen/padding"
+        android:id="@+id/nome_usuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nome"
+        android:inputType="text" />
+
+    <EditText
+        android:padding="@dimen/padding"
+        android:id="@+id/cpf_usuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="CPF"
+        android:inputType="text" />
+
+    <EditText
+        android:padding="@dimen/padding"
+        android:id="@+id/nascimento_usuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Data de Nascimento"
+        android:inputType="date" />
+
+    <LinearLayout
+        android:padding="@dimen/padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SEXO"
+            android:textAppearance="@android:style/TextAppearance.Medium" />
+
+        <RadioButton
+            android:id="@+id/masculino_usuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MASCULINO"
+            android:textAppearance="@android:style/TextAppearance.Medium" />
+
+        <RadioButton
+            android:id="@+id/feminino_usuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FEMININO"
+            android:textAppearance="@android:style/TextAppearance.Medium" />
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/estado_usuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/estados"
+        android:prompt="Estado"></Spinner>
+
+    <Spinner
+        android:id="@+id/cidade_usuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/cidades"
+        android:prompt="Cidade"></Spinner>
+
+    <EditText
+        android:padding="@dimen/padding"
+        android:id="@+id/email_usuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="E-mail"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:padding="@dimen/padding"
+        android:id="@+id/senha_usuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Senha"
+        android:inputType="textEmailAddress" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="Cadastrar"
+        android:text="CADASTRAR" />
+</LinearLayout>

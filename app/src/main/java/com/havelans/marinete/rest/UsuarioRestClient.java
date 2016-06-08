@@ -11,6 +11,8 @@ import okhttp3.HttpUrl;
 
 /**
  * Created by gabriel.fernandes on 09/05/2016.
+ * Cliente de comunicação com o Webservice para
+ * realizar as transações referentes ao bean Usuario
  */
 public class UsuarioRestClient extends RestClient {
 

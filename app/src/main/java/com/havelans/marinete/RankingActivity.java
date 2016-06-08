@@ -23,22 +23,22 @@ import java.util.List;
 
 public class RankingActivity extends Utils {
 
-    ListView listViewMarinete;
-    ArrayList<Marinete> listaMarinete = new ArrayList<>();
-    MarineteRestClient marineteRestClient;
-    SwipeRefreshLayout swipeRefreshLayout;
+    //Declarar todos elementos que devem ser manuseados da atividade aqui
+    private ListView listViewMarinete;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
+    //Demais declarações
+    private ArrayList<Marinete> listaMarinete = new ArrayList<>();
+    private MarineteRestClient marineteRestClient;
     private MarineteAdapter adapter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ranking);
-
+    //Inicialização de variáveis
+    private void init() {
         setupActionBar();
 
         listViewMarinete = (ListView) findViewById(R.id.lista_marinete);
 
+        //carregar marinete selecionada na lista para a tela de detalhamento
         listViewMarinete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -55,6 +55,8 @@ public class RankingActivity extends Utils {
         gson = new GsonBuilder().create();
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        //implementar o que acontece quando o usuario rola a tela para cima, no topo da lista
+        //recarregar lista de marinetes do webservice
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -62,36 +64,51 @@ public class RankingActivity extends Utils {
                 new CarregaMarinetesAsynkTask().execute();
             }
         });
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_ranking);
+        init();
+
+        //No caso de não haver uma instancia salva da tela, carregar marinetes do webservice
         if (savedInstanceState == null) {
             new CarregaMarinetesAsynkTask().execute();
         }
     }
 
     @Override
+    //salvar lista de marinetes na tela antes da destruição da tela
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("lista", listaMarinete);
     }
 
     @Override
+    //carregar lista de marinetes salva anteriormente, quando tela for chamada novamente
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         listaMarinete = savedInstanceState.getParcelableArrayList("lista");
         new CarregaMarinetesAsynkTask().execute();
     }
 
+    //voltar para tela de login no caso de sessão expirada
     private void loginAgain() {
+        //remover token da sharedprefences, ja que o mesmo não é mais valido
         editor.remove("token");
         editor.commit();
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
+    //chamadas assincronas para o webservice
     public class CarregaMarinetesAsynkTask extends AsyncTask<Void, Void, JSONObject> {
 
 
         @Override
+        //verifica se ha uma lista de marinetes salva, se houver, carrega a propria
+        //se nao, carrega a lista atraves do webservice
         protected JSONObject doInBackground(Void... params) {
 
             if (listaMarinete == null || listaMarinete.isEmpty()) {
@@ -107,6 +124,7 @@ public class RankingActivity extends Utils {
         }
 
         @Override
+        //antes de executar, mostrar a animação de carregando
         protected void onPreExecute() {
             super.onPreExecute();
             swipeRefreshLayout.setRefreshing(true);
@@ -119,8 +137,12 @@ public class RankingActivity extends Utils {
             String retorno = null;
             String msg = null;
 
+            //parar animação de carregamento
             swipeRefreshLayout.setRefreshing(false);
 
+            //no caso de sucesso na chamada com o webservice, ou de haver uma lista salva
+            //mostrar lista de marinetes disponiveis no ranking
+            //se não, mostrar erro ocorrido no carregamento
             if (response != null) {
                 try {
                     retorno = response.getString("resp");
